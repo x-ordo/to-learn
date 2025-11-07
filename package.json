@@ -1,0 +1,24 @@
+{
+  "name": "fin-one-monorepo",
+  "private": true,
+  "scripts": {
+    "dev": "npm run build:contracts && concurrently -n web,api -c \"cyan.bold\",\"magenta.bold\" \"npm --prefix apps/web run dev\" \"npm --prefix apps/api run dev\"",
+    "dev:web": "npm --prefix apps/web run dev",
+    "dev:api": "npm --prefix apps/api run dev",
+    "build": "npm run build:contracts && npm run build:web && npm run build:api-only",
+    "build:contracts": "npm --prefix packages/contracts run build",
+    "build:web": "npm --prefix apps/web run build",
+    "build:api-only": "npm --prefix apps/api run build",
+    "build:api": "npm run build:contracts && npm run build:api-only",
+    "lint": "npm --prefix apps/web run lint",
+    "start:web": "npm --prefix apps/web run start",
+    "start:api": "npm --prefix apps/api run start"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  }
+}

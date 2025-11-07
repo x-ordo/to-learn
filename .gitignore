@@ -1,0 +1,14 @@
+node_modules
+.env
+.env.*
+.DS_Store
+.next
+out
+coverage
+dist
+tmp
+*.log
+npm-debug.log*
+yarn-error.log*
+.vercel
+.render
