@@ -2,7 +2,13 @@ import OpenAI from 'openai';
 import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
 import { config } from '../env';
 
-// OpenAI SDK 래퍼. n8n 모드에서는 초기화되지 않도록 지연 생성(lazy init)합니다.
+/**
+ * OpenAI Provider
+ * ---------------
+ * OpenAI SDK 초기화와 모델명 매핑 로직을 한 군데 모아
+ * 라우터가 공급자 세부 구현에 의존하지 않도록 캡슐화합니다.
+ * n8n 모드에서는 SDK를 사용하지 않으므로 lazy-init 패턴을 적용합니다.
+ */
 let openai: OpenAI | null = null;
 
 const getClient = () => {

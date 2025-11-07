@@ -76,7 +76,12 @@ const navLinks = [
   { href: '#stories', label: '사용자 이야기' }
 ];
 
-// 랜딩 페이지 — 서비스 소개와 챗봇 진입 링크를 제공합니다.
+/**
+ * HomePage
+ * --------
+ * 정적 랜딩 페이지로, 서비스 소개/핵심 지표/플로우를 시각화하고
+ * `/chat` 페이지로 진입하는 CTA를 제공합니다.
+ */
 export default function HomePage() {
   return (
     <main className={styles.main}>

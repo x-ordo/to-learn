@@ -1,5 +1,5 @@
 {
-  "name": "@fin-one/contracts",
+  "name": "@to-learn/contracts",
   "version": "0.1.0",
   "private": true,
   "main": "dist/index.js",

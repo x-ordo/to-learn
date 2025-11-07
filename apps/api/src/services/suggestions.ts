@@ -1,6 +1,13 @@
 import { fetchSuggestions } from '../db';
 import type { Category, SuggestionRecord } from '../types';
 
+/**
+ * 추천 프롬프트 서비스
+ * --------------------
+ * DB 조회 로직과 폴백 데이터를 한곳에 두어 라우터가 단순히 호출만 하도록 합니다.
+ * 카테고리별 추천이 없을 때는 안전한 기본 프롬프트를 반환합니다.
+ */
+
 const FALLBACK_SUGGESTIONS: SuggestionRecord[] = [
   {
     id: 'fallback-risk',

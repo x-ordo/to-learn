@@ -1,5 +1,9 @@
 import type { Suggestion } from './types';
 
+/**
+ * 서버 독립 실행 시 사용할 기본 추천 프롬프트.
+ * DB가 비어 있거나 API 연결이 끊겨도 UX를 보장합니다.
+ */
 export const fallbackSuggestions: Suggestion[] = [
   {
     id: 'suggest-risk',
@@ -17,4 +21,3 @@ export const fallbackSuggestions: Suggestion[] = [
     prompt: 'AFPK 실전 대비 문제 하나 내줘.'
   }
 ];
-

@@ -1,8 +1,13 @@
 import { Router } from 'express';
 import { CategoryEnum } from '../types';
 import { getSuggestionsForCategory } from '../services/suggestions';
-// 추천 프롬프트 목록 API. 카테고리 쿼리를 검증하여 상위 추천을 반환합니다.
 
+/**
+ * 추천 프롬프트 API
+ * ----------------
+ * 선택적인 category 쿼리 파라미터를 검증한 뒤
+ * SQLite에 저장된 상위 추천 또는 폴백 추천을 반환합니다.
+ */
 const router = Router();
 
 router.get('/', (req, res) => {

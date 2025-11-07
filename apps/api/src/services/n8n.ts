@@ -1,8 +1,16 @@
 import { fetch } from 'undici';
-import type { ChatRequestBody, ChatResponse } from '@fin-one/contracts';
+import type { ChatRequestBody, ChatResponse } from '@to-learn/contracts';
 import { config } from '../env';
 import { ApiError } from '../middleware/errorHandler';
 import type { ConversationRecord, MessageRecord } from '../types';
+
+/**
+ * n8n Provider
+ * ------------
+ * 외부 워크플로우(n8n HTTP/Webhook)와 통신하며
+ * 서버가 관리하는 대화 ID/히스토리 정보를 함께 전달합니다.
+ * 이를 통해 워크플로우가 보다 정교한 프롬프트 엔지니어링을 수행할 수 있습니다.
+ */
 
 // n8n 호출에 필요한 컨텍스트 — 요청 본문 외에 서버가 보유한 대화/히스토리도 전달합니다.
 interface InvokeN8nParams {

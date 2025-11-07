@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { sendChatMessage, getDefaultSuggestions } from '../../lib/api/chatClient';
-import { ChatMessage, ChatSuggestion, Category, Difficulty } from '@fin-one/contracts';
+import { ChatMessage, ChatSuggestion, Category, Difficulty } from '@to-learn/contracts';
 import styles from './chat.module.css';
 
 // 첫 진입 시 사용자에게 가이드를 보여주는 환영 메시지
@@ -48,6 +48,15 @@ const categoryOptions: Array<{ label: string; value: Category; description: stri
 
 type MenuType = 'model' | 'difficulty' | 'category';
 
+/**
+ * ChatPage
+ * --------
+ * Next.js App Router 클라이언트 컴포넌트.
+ * - 대화 상태/추천 프롬프트/모델 설정을 관리하고
+ * - `chatClient`를 통해 백엔드 API와 통신합니다.
+ * 민감한 API 키는 브라우저에 노출되지 않으며,
+ * 공개 가능한 메타데이터(난이도/카테고리)만 전송합니다.
+ */
 export default function ChatPage() {
   const [conversationId, setConversationId] = useState<string | undefined>();
   const [messages, setMessages] = useState<ChatMessage[]>([initialMessage]);
@@ -63,6 +72,7 @@ export default function ChatPage() {
 
   // 새 메시지가 추가되면 스크롤을 하단으로 이동
   useEffect(() => {
+    // 신규 메시지가 등장하면 스크롤을 자연스럽게 하단으로 이동
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isLoading]);
 

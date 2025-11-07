@@ -1,8 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 
-// Express 비동기 핸들러에서 throw된 에러를 next()로 전달해
-// 전역 에러 미들웨어가 처리하도록 돕는 헬퍼입니다.
-
+/**
+ * 비동기 라우트에서 try/catch 반복을 없애기 위한 래퍼.
+ * Promise가 reject되면 자동으로 `next(err)`를 호출하여
+ * 전역 `errorHandler`가 일괄 처리하도록 위임합니다.
+ */
 export const asyncHandler = <T extends (req: Request, res: Response, next: NextFunction) => Promise<unknown>>(
   handler: T
 ) => {

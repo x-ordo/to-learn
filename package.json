@@ -1,5 +1,5 @@
 {
-  "name": "fin-one-monorepo",
+  "name": "to-learn-monorepo",
   "private": true,
   "scripts": {
     "dev": "npm run build:contracts && concurrently -n web,api -c \"cyan.bold\",\"magenta.bold\" \"npm --prefix apps/web run dev\" \"npm --prefix apps/api run dev\"",

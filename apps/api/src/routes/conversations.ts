@@ -2,8 +2,13 @@ import { Router } from 'express';
 import { getConversationWithMessages } from '../db';
 import { asyncHandler } from '../utils/asyncHandler';
 import { ApiError } from '../middleware/errorHandler';
-// 저장된 대화 스냅샷을 조회하는 라우트
 
+/**
+ * Conversation Router
+ * -------------------
+ * 단일 대화 ID에 대한 메타데이터 + 메시지 히스토리를 반환합니다.
+ * 저장소 구현(SQLite/메모리)은 db 모듈이 숨기므로 여기서는 단순히 조회만 수행합니다.
+ */
 const router = Router();
 
 router.get(

@@ -1,3 +1,12 @@
+/**
+ * 데이터 계층
+ * -----------
+ * 단일 모듈에서 SQLite(기본)와 메모리 저장소(폴백)를 모두 다룹니다.
+ * - better-sqlite3를 사용할 수 없거나 설치가 실패하면 자동으로 메모리 모드로 전환됩니다.
+ * - CRUD 헬퍼를 통해 라우터/서비스 레이어가 저장 방식에 의존하지 않도록 캡슐화합니다.
+ *
+ * 보안 메모: 파일 경로는 환경설정을 통해 주입되며, 사용자 입력은 SQL 파라미터 바인딩으로만 사용합니다.
+ */
 import fs from 'fs';
 import path from 'path';
 import { v4 as uuid } from 'uuid';
@@ -50,7 +59,7 @@ try {
 } catch (error) {
   storageMode = 'memory';
   console.warn(
-    '[fin-one] better-sqlite3 native 모듈을 불러오지 못했습니다. 재시작 시 초기화되는 메모리 저장소를 사용합니다.',
+    '[to-learn] better-sqlite3 native 모듈을 불러오지 못했습니다. 재시작 시 초기화되는 메모리 저장소를 사용합니다.',
     (error as Error)?.message ?? error
   );
 }
@@ -124,6 +133,7 @@ const seedSuggestions: SuggestionRecord[] = [
   }
 ];
 
+// 초기 추천 데이터를 한번만 주입하기 위한 헬퍼
 const seedSuggestionsIfNeeded = () => {
   if (storageMode === 'memory') {
     if (memoryStore.suggestions.size === 0) {

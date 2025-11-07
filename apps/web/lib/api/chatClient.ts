@@ -3,12 +3,13 @@ import {
   ChatRequestPayload,
   ChatResponse,
   ChatSuggestion
-} from '@fin-one/contracts';
+} from '@to-learn/contracts';
 
 // 프론트엔드에서 백엔드 챗봇 API를 호출하는 얇은 클라이언트입니다.
 // - 기본 경로는 NEXT_PUBLIC_CHAT_API_URL (미설정 시 /api/chat)
 // - 서버 미가동/네트워크 오류 시 임시(Mock) 응답을 반환하여 UX를 유지합니다.
 
+// API 기본 주소 — 환경변수가 없으면 Next.js API Route(`/api/chat`)로 프록시
 const API_URL =
   process.env.NEXT_PUBLIC_CHAT_API_URL && process.env.NEXT_PUBLIC_CHAT_API_URL.length > 0
     ? process.env.NEXT_PUBLIC_CHAT_API_URL
@@ -32,6 +33,12 @@ const fallbackSuggestions: ChatSuggestion[] = [
   }
 ];
 
+/**
+ * 백엔드 챗봇 API 호출
+ * -------------------
+ * - 성공 시 서버 응답을 그대로 반환하고
+ * - 네트워크/서버 오류 시 안전한 Mock 응답을 생성해 UI를 유지합니다.
+ */
 export async function sendChatMessage(payload: ChatRequestPayload): Promise<ChatResponse> {
   try {
     const response = await fetch(API_URL, {
@@ -78,6 +85,7 @@ function createId() {
   return Math.random().toString(36).slice(2, 10);
 }
 
+// 사용자의 마지막 메시지에 따라 자연스러운 예시 응답을 만들어줍니다.
 function createMockContent(message: string) {
   const lowered = message.toLowerCase();
 

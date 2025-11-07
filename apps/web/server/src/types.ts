@@ -1,5 +1,10 @@
 import { z } from 'zod';
 
+/**
+ * 데모 서버 전용 타입/스키마.
+ * 실제 배포 환경에서는 `@to-learn/contracts`를 사용하지만,
+ * 독립 서버는 의존성을 최소화하기 위해 경량 스키마를 별도로 둡니다.
+ */
 export const ChatRequestSchema = z.object({
   conversationId: z.string().min(1).optional(),
   message: z.string().min(1, 'message is required'),
@@ -43,4 +48,3 @@ export type ChatResponse = {
   messages: OutgoingMessage[];
   suggestions?: Suggestion[];
 };
-

@@ -1,6 +1,14 @@
 import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
 import type { ChatMetadata, MessageRecord } from '../types';
-// 프롬프트 유틸: 시스템 역할 문장과 OpenAI 메시지 배열을 구성합니다.
+
+/**
+ * 프롬프트 헬퍼
+ * -------------
+ * 시스템 메시지와 히스토리를 OpenAI SDK에서 기대하는
+ * `ChatCompletionMessageParam[]` 형태로 조합합니다.
+ * 사용자의 학습 맥락(난이도/카테고리/토픽)은 시스템 프롬프트로 흡수하여
+ * 비식별 정보만 모델에 전달합니다.
+ */
 
 export const buildSystemPrompt = (metadata?: ChatMetadata): string => {
   const difficulty = metadata?.difficulty ? `난이도는 ${metadata.difficulty} 수준` : '난이도는 미정';

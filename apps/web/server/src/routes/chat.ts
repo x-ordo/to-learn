@@ -6,6 +6,12 @@ import { insertConversation, insertMessage, fetchSuggestions } from '../db';
 import { getOpenAI, mapModel } from '../services/openai';
 import { fallbackSuggestions } from '../suggestions';
 
+/**
+ * 데모용 Chat Router
+ * -----------------
+ * Next.js 서버 액션 대신 별도 Express 서버를 돌릴 때 사용합니다.
+ * OpenAI API 키가 없으면 mock 응답을 생성해 UI를 유지합니다.
+ */
 export const chatRouter = Router();
 
 chatRouter.post('/chat', async (req, res) => {
@@ -170,6 +176,7 @@ function chunkText(text: string) {
   return chunks.length ? chunks : [''];
 }
 
+// Streaming 데모를 위해 응답을 일정 간격으로 나누어 전송합니다.
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }

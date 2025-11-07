@@ -3,6 +3,13 @@ import fs from 'fs';
 import path from 'path';
 import type { Suggestion } from './types';
 
+/**
+ * 경량 SQLite 래퍼
+ * ----------------
+ * Next.js 서버 번들에서도 재사용 가능한 SQLite 초기화 코드입니다.
+ * 단일 커넥션(better-sqlite3)과 간단한 DAO 함수를 노출합니다.
+ */
+
 const dbPath = process.env.SQLITE_PATH || path.join(process.cwd(), 'data', 'tolearn.db');
 
 const ensureDir = () => {
@@ -82,4 +89,3 @@ export function fetchSuggestions(limit = 3): Suggestion[] {
   const stmt = db.prepare(`SELECT id, label, prompt, category FROM suggestions ORDER BY weight DESC LIMIT ?`);
   return stmt.all(limit) as Suggestion[];
 }
-

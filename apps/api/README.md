@@ -1,6 +1,6 @@
 # to-learn Chatbot API
 
-Express + SQLite 챗봇 백엔드입니다. Monorepo(`../..`) 루트에서 Next.js 프론트엔드와 함께 개발/배포하며, 동일한 ChatRequest/Response 계약(`@fin-one/contracts`)을 준수합니다.
+Express + SQLite 챗봇 백엔드입니다. Monorepo(`../..`) 루트에서 Next.js 프론트엔드와 함께 개발/배포하며, 동일한 ChatRequest/Response 계약(`@to-learn/contracts`)을 준수합니다.
 
 ## 요구 사항
 - Node.js 20.x (Render 배포 타깃과 동일)
@@ -73,7 +73,7 @@ src/
     openai.ts        # GPT-4o 호출 + 모델 매핑
     n8n.ts           # n8n HTTP/Webhook 호출 래퍼 (동기/스트림 모두 처리)
     suggestions.ts   # 추천 Prompt 로테이션
-  types.ts           # DB 레코드 타입 + @fin-one/contracts 재노출
+  types.ts           # DB 레코드 타입 + @to-learn/contracts 재노출
   utils/             # Prompt builder, asyncHandler 등
 ```
 

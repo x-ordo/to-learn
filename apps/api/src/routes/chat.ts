@@ -10,7 +10,15 @@ import { createChatCompletion, createChatCompletionStream, resolveModel } from '
 import { getSuggestionsForCategory } from '../services/suggestions';
 import { invokeN8nChat } from '../services/n8n';
 
-// 채팅 관련 라우터. 비스트리밍/스트리밍(SSE) 모두 동일한 요청/응답 계약을 따릅니다.
+/**
+ * Chat Router
+ * -----------
+ * `/api/chat`       : 단발(non-stream) 응답
+ * `/api/chat/stream`: Server-Sent Events 기반 스트리밍 응답
+ *
+ * 요청/응답 스키마는 `@to-learn/contracts`와 동일하며,
+ * OpenAI 모드와 n8n 모드가 동일한 HTTP 계약을 유지하도록 추상화합니다.
+ */
 const router = Router();
 
 // OpenAI SDK의 응답 조각에서 텍스트만 안전하게 추출합니다.
@@ -160,6 +168,7 @@ router.post(
     });
 
     const sendEvent = (data: unknown) => {
+      // SSE는 "data:" 라인 단위로 전송해야 하며, JSON 문자열만 포함합니다.
       res.write(`data: ${JSON.stringify(data)}\n\n`);
     };
 

@@ -1,7 +1,7 @@
 {
-  "name": "@fin-one/api",
+  "name": "@to-learn/api",
   "version": "1.0.0",
-  "description": "Express + SQLite chatbot API for Fin-One frontend",
+  "description": "Express + SQLite chatbot API for ToLearn frontend",
   "main": "dist/server.js",
   "scripts": {
     "dev": "PORT=4000 ts-node-dev --respawn --transpile-only src/server.ts",
@@ -17,7 +17,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "@fin-one/contracts": "file:../../packages/contracts",
+    "@to-learn/contracts": "file:../../packages/contracts",
     "better-sqlite3": "^12.4.1",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",

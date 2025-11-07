@@ -1,6 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
 
-// 에러 표현용 커스텀 타입. 상태코드/에러코드/세부정보를 보존합니다.
+/**
+ * 커스텀 ApiError
+ * ---------------
+ * HTTP 상태코드, 식별 가능한 에러 코드, 세부 정보를 함께 보관하여
+ * 클라이언트가 에러 유형을 손쉽게 분류할 수 있도록 돕습니다.
+ */
 export class ApiError extends Error {
   status: number;
   code: string;
@@ -14,7 +19,13 @@ export class ApiError extends Error {
   }
 }
 
-// 전역 에러 핸들러 — JSON 포맷으로 일관 응답, 서버 에러는 콘솔 로깅
+/**
+ * 전역 에러 핸들러
+ * ----------------
+ * Express 라우터 어디에서든 throw된 에러를 JSON 응답으로 정규화합니다.
+ * - 5xx 에러는 서버 로그에 남기고, request-id를 함께 출력해 추적성을 확보합니다.
+ * - 민감 정보는 details에 전달하지 않고, 필요한 경우 추가 컨텍스트만 제공합니다.
+ */
 export const errorHandler = (err: Error | ApiError, req: Request, res: Response, _next: NextFunction) => {
   const status = err instanceof ApiError ? err.status : 500;
   const code = err instanceof ApiError ? err.code : 'INTERNAL_SERVER_ERROR';
