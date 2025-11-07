@@ -10,8 +10,8 @@
     "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
-      "@to-learn/contracts": ["packages/contracts/src"],
-      "@to-learn/contracts/*": ["packages/contracts/src/*"]
+      "@to-learn/contracts": ["packages/contracts/dist"],
+      "@to-learn/contracts/*": ["packages/contracts/dist/*"]
     }
   }
 }

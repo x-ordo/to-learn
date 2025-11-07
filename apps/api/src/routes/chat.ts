@@ -1,5 +1,7 @@
 import { Router } from 'express';
 import type { ChatCompletionChunk } from 'openai/resources/chat/completions';
+import type { ChatMessage } from '@to-learn/contracts';
+import type { ZodIssue } from 'zod';
 import { ensureConversation, listMessages, saveMessage } from '../db';
 import { ChatRequestSchema } from '../types';
 import { config } from '../env';
@@ -41,7 +43,7 @@ router.post(
       return res.status(422).json({
         error: {
           code: 'VALIDATION_ERROR',
-          message: parsed.error.issues.map((issue) => issue.message).join(', '),
+          message: parsed.error.issues.map((issue: ZodIssue) => issue.message).join(', '),
           details: parsed.error.flatten()
         }
       });
@@ -73,8 +75,8 @@ router.post(
       });
 
       const assistantMessages = n8nResponse.messages
-        .filter((message) => message.role === 'assistant')
-        .map((message) =>
+        .filter((message: ChatMessage) => message.role === 'assistant')
+        .map((message: ChatMessage) =>
           saveMessage({ conversationId: conversation.id, role: 'assistant', content: message.content })
         );
 
@@ -137,7 +139,7 @@ router.post(
         JSON.stringify({
           error: {
             code: 'VALIDATION_ERROR',
-            message: parsed.error.issues.map((issue) => issue.message).join(', '),
+            message: parsed.error.issues.map((issue: ZodIssue) => issue.message).join(', '),
             details: parsed.error.flatten()
           }
         })
@@ -182,8 +184,8 @@ router.post(
         });
 
         const assistantMessages = n8nResponse.messages
-          .filter((message) => message.role === 'assistant')
-          .map((message) =>
+          .filter((message: ChatMessage) => message.role === 'assistant')
+          .map((message: ChatMessage) =>
             saveMessage({ conversationId: conversation.id, role: 'assistant', content: message.content })
           );
 
