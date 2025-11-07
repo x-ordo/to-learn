@@ -28,4 +28,4 @@ envVarGroups:
       - key: N8N_API_KEY
         value: 
       - key: ALLOWED_ORIGINS
-        value: https://tolearn.vercel.app,https://preview.tolearn.vercel.app,http://localhost:3000
+        value: https://to-learn-web.vercel.app,https://preview.to-learn-web.vercel.app,http://localhost:3000

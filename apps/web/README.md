@@ -48,7 +48,7 @@ public/
 1. 루트 레포를 Vercel에 연결하고 프로젝트 디렉터리로 `apps/web`을 선택합니다.
 2. Build Command: `npm run build:web`
 3. Env Var: `NEXT_PUBLIC_CHAT_API_URL=https://<render-app>.onrender.com/api/chat`
-4. Render 백엔드 `ALLOWED_ORIGINS`에 Vercel 도메인을 추가합니다.
+4. Render 백엔드 `ALLOWED_ORIGINS`에 Vercel 실서비스 도메인 `https://to-learn-web.vercel.app`(및 필요 시 프리뷰)를 추가합니다.
 
 ## 개발 팁
 - `lib/api/chatClient.ts`는 서버 장애 시 모의 응답을 제공하므로 초기 데모에 활용할 수 있습니다.

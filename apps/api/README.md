@@ -41,6 +41,10 @@ npm run dev:api
 | `N8N_API_KEY` | 선택. 제공 시 `Authorization: Bearer` 헤더로 전달 |
 | `SWAGGER_PORT` | 선택. API 포트와 분리된 Swagger UI 전용 포트(예: 8000) |
 
+> 운영 환경 예시:  
+> `ALLOWED_ORIGINS=http://localhost:3000,https://to-learn-web.vercel.app`  
+> (프런트 실서비스 URL: https://to-learn-web.vercel.app)
+
 ### Provider 동작
 - **OpenAI 모드**: 기존 GPT-4o 호출 + 내부 Prompt Builder (`src/utils/prompts.ts`).
 - **n8n 모드**: `request`, `conversation`, `history`를 그대로 전송하고, n8n에서 반환한 `ChatResponse`를 저장/전달합니다. SSE(`/api/chat/stream`)는 단일 `done: true` 이벤트로 마무리됩니다.

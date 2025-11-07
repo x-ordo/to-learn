@@ -80,6 +80,9 @@ package.json  # npm workspaces + 공용 스크립트
 두 모드 모두 `/api/chat` / `/api/chat/stream` 엔드포인트를 동일하게 제공합니다.  
 n8n 스트리밍은 단일 완료 이벤트(`{ done: true }`)만 내려보냅니다.
 
+> 운영 환경에서는 `ALLOWED_ORIGINS=http://localhost:3000,https://to-learn-web.vercel.app`처럼
+> 실 서비스 도메인(https://to-learn-web.vercel.app)을 반드시 허용 목록에 포함하세요.
+
 ---
 
 ## Contracts Package (`packages/contracts`)
@@ -90,6 +93,14 @@ n8n 스트리밍은 단일 완료 이벤트(`{ done: true }`)만 내려보냅니
 ---
 
 ## Deployment
+### Local vs Production 운영 요약
+| 구분 | 웹 (Next.js) | API (Express) | 공통 체크 |
+| --- | --- | --- | --- |
+| **로컬 개발** | `npm run dev:web` (기본 `http://localhost:3000`) | `npm run dev:api` (기본 `http://localhost:4000`) | `.env.local`/`.env` 복사, `npm install --ignore-scripts`, `npm run build:contracts` |
+| **동시 실행** | `npm run dev` (concurrently) | 동일 | logger/Swagger: `http://localhost:4000/docs` 확인 |
+| **배포** | Vercel 프로젝트 디렉터리 `apps/web`, Build `npm run build:web` | Render Build `npm install --ignore-scripts && npm run build:api`, Start `npm run start:api` | Env: `NEXT_PUBLIC_CHAT_API_URL=https://<render-api>/api/chat`, `ALLOWED_ORIGINS=http://localhost:3000,https://to-learn-web.vercel.app`, `CHAT_PROVIDER`, `OPENAI_API_KEY` 혹은 `N8N_*` |
+| **운영 점검** | Vercel logs + Next.js Analytics | Render health check `GET /_health`, optional Swagger 전용 포트 | 변경된 contracts → `npm run build:contracts` 후 웹/백 모두 재배포 |
+
 ### API (Render)
 1. Build command: `npm install && npm run build:api`
 2. Start command: `npm run start:api`
@@ -105,6 +116,8 @@ n8n 스트리밍은 단일 완료 이벤트(`{ done: true }`)만 내려보냅니
 3. Env:
    - `NEXT_PUBLIC_CHAT_API_URL=https://<render-api>/api/chat`
    - SSG/ISR 설정은 Next 기본값 사용
+4. 프런트엔드 실 서비스 URL: `https://to-learn-web.vercel.app`  
+   Render 백엔드 `ALLOWED_ORIGINS`에 해당 도메인을 포함시키면 CORS 오류를 예방할 수 있습니다.
 
 ### OpenAPI / n8n
 - Swagger UI: `https://<api-domain>/docs`
