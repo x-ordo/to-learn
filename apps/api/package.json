@@ -7,7 +7,7 @@
     "predev": "npm --prefix ../../packages/contracts run build",
     "dev": "PORT=4000 ts-node-dev --respawn --transpile-only src/server.ts",
     "prebuild": "npm --prefix ../../packages/contracts run build",
-    "build": "tsc -p tsconfig.json",
+    "build": "npm --prefix ../../packages/contracts run build && tsc -p tsconfig.json",
     "start": "node dist/server.js",
     "test": "echo \"No tests defined\""
   },
