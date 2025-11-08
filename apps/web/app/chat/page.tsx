@@ -217,8 +217,7 @@ export default function ChatPage() {
             ))}
           </div>
           <div className={styles.sidebarFooter}>
-            SQLite에 저장된 학습 이력으로 맞춤형 추천이 업데이트됩니다. 백엔드를 연결하면 팀
-            학습 리포트도 자동으로 생성돼요.
+            챗봇이 누적 학습 이력을 스스로 분석해 추천을 조정하고, 팀과 공유할 리포트도 자동으로 생성해요.
           </div>
         </aside>
 

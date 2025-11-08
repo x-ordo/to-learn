@@ -11,26 +11,22 @@ const features = [
   {
     icon: '📊',
     title: '맞춤형 커리큘럼',
-    description:
-      '학습자의 수준과 목표를 분석하여 매일 새로운 금융 학습 플랜을 제안합니다.'
+    description: '학습자가 제출한 목표·난이도를 분석해 하루 단위 학습 루틴을 자동으로 큐레이션합니다.'
   },
   {
     icon: '🤖',
     title: 'AI 문제 생성',
-    description:
-      'Express 기반 API와 연동되는 챗봇이 실전 감각을 살린 문제를 실시간 생성합니다.'
+    description: '현업 사례와 자격증 유형을 섞어, 실전 감각을 살린 문제와 해설을 실시간으로 제공합니다.'
   },
   {
     icon: '🧭',
     title: '러닝 저니 추적',
-    description:
-      'sqlite에 저장된 이력을 통해 진도, 강점, 보완 영역을 한눈에 파악할 수 있습니다.'
+    description: '모든 대화와 추천이 기록되어 진도·강점·보완 영역을 대시보드로 확인할 수 있습니다.'
   },
   {
     icon: '🚀',
     title: '프로 지향형 피드백',
-    description:
-      '실무 금융 시나리오와 연결된 피드백으로 취업 준비생과 실무자 모두에게 도움을 줍니다.'
+    description: '면접 대비부터 팀 교육까지, 상황별 후속 액션과 참고 자료를 챗봇이 바로 제안합니다.'
   }
 ];
 
@@ -38,20 +34,17 @@ const workflow = [
   {
     step: 'STEP 01',
     title: '목표 설정 & 진단',
-    description:
-      '랜딩 페이지에서 간단한 프로필과 학습 목표를 제출하면, Express API가 진단 테스트를 실행합니다.'
+    description: '프로필과 관심 분야를 입력하면 챗봇이 현재 수준을 스스로 진단하고 학습 전략을 설계합니다.'
   },
   {
     step: 'STEP 02',
     title: '챗봇과 학습',
-    description:
-      'Next.js 웹앱에서 챗봇과 대화하며 맞춤형 문제를 풀고, 즉각적인 해설과 심화 리소스를 추천받습니다.'
+    description: '모바일·데스크톱 어디서든 챗봇과 대화하며 맞춤형 문제 풀이, 심화 리소스 추천을 한 번에 받습니다.'
   },
   {
     step: 'STEP 03',
     title: '성과 리포트',
-    description:
-      '누적 학습 데이터는 SQLite에 저장되어 대시보드에서 성장 추이를 시각화합니다.'
+    description: '학습 기록이 자동으로 리포트화되어 성장 추이를 팀과 공유하고 다음 목표에 바로 연결합니다.'
   }
 ];
 
@@ -116,9 +109,8 @@ export default function HomePage() {
           챗봇과 함께 가장 빠르게
         </h1>
         <p>
-          투런은 Express.js 기반 챗봇 엔진과 Next.js 프론트엔드를 결합해 학습자마다 다른
-          금융 문제와 피드백을 제공합니다. 이제 핀테크 취업 준비부터 자격증 대비까지 한 번에
-          해결하세요.
+          투런은 학습자별 맥락을 읽고, 커리큘럼·문제·피드백을 한 번에 구성하는 금융 학습
+          파트너입니다. 핀테크 취업 준비부터 사내 교육까지 챗봇 한 명으로 해결하세요.
         </p>
         <div className={styles.heroCta}>
           <Link href="/chat" className={styles.primaryButton}>
@@ -191,8 +183,7 @@ export default function HomePage() {
             챗봇과 함께하는 금융 학습의 시작을 놓치지 마세요
           </h2>
           <p style={{ margin: 0, color: 'rgba(226, 232, 240, 0.85)', maxWidth: '540px' }}>
-            오늘 등록하면 챗봇이 바로 학습 목표를 분석하고, Express API와 연동된 개인화 문제
-            풀기 경험을 제공합니다.
+            오늘 등록하면 챗봇이 학습 목표를 스스로 분석해 맞춤형 문제와 액션 플랜을 바로 제안합니다.
           </p>
           <div className={styles.ctaActions}>
             <Link href="/chat" className={styles.primaryButton}>

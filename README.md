@@ -1,35 +1,34 @@
 # To-Learn Monorepo
 
-투런(ToLearn)의 챗 학습 서비스 전용 모노레포입니다.  
-Next.js 웹앱(`apps/web`)과 Express 기반 챗봇 API(`apps/api`)가 같은 타입·OpenAPI 계약(`packages/contracts`)을 공유하며, OpenAI 또는 n8n 파이프라인을 선택적으로 사용합니다.
+투런(ToLearn) 챗봇은 학습자에게 개인화된 금융 컨시어지 경험을 제공하기 위한 서비스형 모노레포입니다.  
+웹(상담 화면)과 API(추천·대화 엔진)는 동일한 대화 규격을 공유해, 원하는 학습 시나리오(OpenAI·n8n·타 워크플로우)를 쉽게 전환할 수 있습니다.
 
 ---
 
-## Tech Highlights
-- **Stack**: Next.js 14 (App Router), Express, better-sqlite3, Zod, tRPC 스타일 OpenAPI 계약.
-- **Contracts-first**: `packages/contracts`에서 요청/응답 스키마와 OpenAPI 명세를 단일 소스로 관리합니다.
-- **Provider toggle**: `CHAT_PROVIDER=openai|n8n`으로 빠르게 파이프라인을 변경하며 동일한 HTTP 인터페이스 유지.
-- **Workspace scripts**: 한 번의 명령으로 프론트/백을 동시에 개발·빌드·배포.
+## 서비스 강점
+- **한 번의 대화 경험**: Next 기반 상담 UI와 챗봇 엔진이 같은 언어로 소통해, 기획/디자인 변경 시에도 동일한 결과물을 유지합니다.
+- **학습 컨시어지**: 추천 프롬프트, 난이도/카테고리 전환, 리포트 저장 기능이 기본 제공되어 팀 단위 학습 관리에 유리합니다.
+- **데이터 일관성**: 대화/추천/스키마가 하나의 계약(`packages/contracts`)에서 관리되어, 수정 시 모든 채널에 즉시 반영됩니다.
+- **실시간 파이프라인 전환**: OpenAI 또는 n8n 등 원하는 챗봇 흐름을 환경 변수만 바꿔 손쉽게 전환할 수 있습니다.
 
 ---
 
 ## Repository Layout
 ```
 apps/
-  web/        # Next.js 프론트엔드 (Vercel 배포 타깃)
-  api/        # Express + SQLite 백엔드 (Render 배포 타깃)
+  web/        # 상담·학습 UI, Vercel 배포
+  api/        # 챗봇/추천 엔진, Render 배포
 packages/
-  contracts/  # TypeScript 타입, Zod 스키마, OpenAPI 문서
-package.json  # npm workspaces + 공용 스크립트
+  contracts/  # 대화 규격·추천 스키마
+package.json  # 공용 스크립트/워크스페이스 설정
 ```
 
 ---
 
-## Requirements
-- Node.js 20 (Render/Vercel 런타임과 동일)  
-  `nvm use 20 || nvm install 20`
+## 필수 준비물
+- Node.js 20 (운영 환경과 동일) → `nvm use 20 || nvm install 20`
 - npm 10+
-- SQLite 3 (내장 바이너리 사용, 추가 설치 불필요)
+- SQLite 3 (내장 바이너리 사용)
 
 ---
 
@@ -48,7 +47,7 @@ package.json  # npm workspaces + 공용 스크립트
    ```bash
    npm run dev                 # web:3000 + api:4000 동시에 실행
    ```
-4. **Useful scripts**
+4. **핵심 스크립트**
    | Script | 설명 |
    | --- | --- |
    | `npm run dev:web` | Next.js 단독 실행 |
@@ -61,34 +60,30 @@ package.json  # npm workspaces + 공용 스크립트
 ---
 
 ## Configuration
-### apps/web/.env.local
+### 상담 웹 (`apps/web/.env.local`)
 | Key | 설명 |
 | --- | --- |
-| `NEXT_PUBLIC_CHAT_API_URL` | API 기본 주소. 비우면 Next.js `/api/chat` 프록시 사용 |
+| `NEXT_PUBLIC_CHAT_API_URL` | 챗봇 엔진 주소. 비워두면 로컬 프록시(`/api/chat`) 사용 |
 
-### apps/api/.env
+### 챗봇 엔진 (`apps/api/.env`)
 | Key | 설명 |
 | --- | --- |
-| `PORT` | 기본 4000 |
-| `SQLITE_PATH` | 기본 `./data/tolearn.db`, Render에서는 `/var/data/tolearn.db` 권장 |
-| `ALLOWED_ORIGINS` | CORS 허용 목록 (쉼표 구분) |
+| `PORT` | API 포트 (기본 4000) |
+| `SQLITE_PATH` | 학습 기록 파일 위치 (로컬: `./data/tolearn.db`, 운영: `/var/data/tolearn.db`) |
+| `ALLOWED_ORIGINS` | 상담 웹이 접근 가능한 도메인 목록 |
 | `CHAT_PROVIDER` | `openai` 또는 `n8n` |
-| `OPENAI_API_KEY` | `CHAT_PROVIDER=openai`일 때 필수 |
-| `N8N_WEBHOOK_URL` | n8n HTTP/Webhook URL |
-| `N8N_API_KEY` | n8n 플로우 보호용 Bearer 토큰(선택) |
+| `OPENAI_API_KEY` | OpenAI 모드일 때 사용 |
+| `N8N_WEBHOOK_URL` | n8n 모드일 때 연결할 웹훅 |
+| `N8N_API_KEY` | n8n 호출 시 사용할 토큰(선택) |
 
-두 모드 모두 `/api/chat` / `/api/chat/stream` 엔드포인트를 동일하게 제공합니다.  
-n8n 스트리밍은 단일 완료 이벤트(`{ done: true }`)만 내려보냅니다.
-
-> 운영 환경에서는 `ALLOWED_ORIGINS=http://localhost:3000,https://to-learn-web.vercel.app`처럼
-> 실 서비스 도메인(https://to-learn-web.vercel.app)을 반드시 허용 목록에 포함하세요.
+> 운영 배포 시 `ALLOWED_ORIGINS`에 `https://to-learn-web.vercel.app`를 꼭 포함해 상담 웹에서 안전하게 호출하도록 합니다.
 
 ---
 
-## Contracts Package (`packages/contracts`)
-- `chat.ts`: `ChatMessage`, `ChatSuggestion`, `ChatResponse` 등 핵심 타입과 난이도/카테고리 enum 정의.
-- `openapi.ts`: `/docs` (Swagger UI)와 `/docs.json`에 노출되는 OpenAPI 스키마를 생성.
-- 다른 워크스페이스에서 `@to-learn/contracts`로 import하며, 변경 후 `npm run build:contracts`로 재컴파일해야 합니다.
+## 대화 계약 (`packages/contracts`)
+- 챗봇 메시지, 추천 프롬프트, 카테고리/난이도 정의 등 상담에 필요한 모든 규격을 단일 소스로 관리합니다.
+- `/docs`, `/docs.json`에서 동일한 스키마를 참조해 n8n·외부 파트너와도 일관된 통합을 지원합니다.
+- 규격 변경 시 `npm run build:contracts`로 재배포하면 웹/엔진이 동시에 최신 스키마를 공유합니다.
 
 ---
 
