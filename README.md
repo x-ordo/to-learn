@@ -73,6 +73,7 @@ package.json  # 공용 스크립트/워크스페이스 설정
 | Key | 설명 |
 | --- | --- |
 | `NEXT_PUBLIC_CHAT_API_URL` | 챗봇 엔진 주소. 비워두면 로컬 프록시(`/api/chat`) 사용 |
+| `NEXT_PUBLIC_API_BASE_URL` | (선택) Summary/Q&A/Quiz/Recommend 등 비채팅 엔드포인트의 베이스 URL. 예: `https://api.example.com/api` |
 
 ### 챗봇 엔진 (`apps/api/.env`)
 | Key | 설명 |

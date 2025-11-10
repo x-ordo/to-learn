@@ -17,8 +17,12 @@ interface UploadResponse {
   };
 }
 
+// Allow an explicit base override for non-chat APIs.
+// Use when the chat URL is proxied differently or when deploying web and api on separate domains.
+const EXPLICIT_API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 const buildUrl = (path: string) => {
-  const base = API_BASE_URL || '/api';
+  const base = (EXPLICIT_API_BASE && EXPLICIT_API_BASE.length > 0) ? EXPLICIT_API_BASE : (API_BASE_URL || '/api');
   return `${base}${path}`;
 };
 
