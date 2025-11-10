@@ -942,7 +942,7 @@ export default function ChatPage() {
   );
 }
 
-function formatMetaValue(value: unknown) {
+function formatMetaValue(value: unknown): string {
   if (value === null || value === undefined) {
     return '-';
   }
@@ -955,7 +955,7 @@ function formatMetaValue(value: unknown) {
   if (Array.isArray(value)) {
     return value
       .map((item) => formatMetaValue(item))
-      .filter(Boolean)
+      .filter((v): v is string => Boolean(v))
       .join(', ');
   }
   try {
@@ -965,7 +965,7 @@ function formatMetaValue(value: unknown) {
   }
 }
 
-function buildMetaSummary(meta?: Record<string, unknown>) {
+function buildMetaSummary(meta?: Record<string, unknown>): string {
   if (!meta) {
     return '';
   }
