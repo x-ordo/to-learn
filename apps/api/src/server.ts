@@ -18,6 +18,11 @@ import { chatRouter } from './routes/chat';
 import { healthRouter } from './routes/health';
 import { conversationsRouter } from './routes/conversations';
 import { suggestionsRouter } from './routes/suggestions';
+import { summaryRouter } from './routes/summary';
+import { qnaRouter } from './routes/qna';
+import { quizRouter } from './routes/quiz';
+import { recommendRouter } from './routes/recommend';
+import { uploadRouter } from './routes/upload';
 import { openApiDocument } from '@to-learn/contracts';
 
 // Express 앱 초기화. Render 등 프록시 환경을 고려하여 trust proxy 설정을 활성화합니다.
@@ -73,6 +78,11 @@ app.use('/_health', healthRouter);
 app.use('/api/chat', chatRouter);
 app.use('/api/conversations', conversationsRouter);
 app.use('/api/suggestions', suggestionsRouter);
+app.use('/api/upload', uploadRouter);
+app.use('/api/summary', summaryRouter);
+app.use('/api/qna', qnaRouter);
+app.use('/api/quiz', quizRouter);
+app.use('/api/recommend', recommendRouter);
 
 // 매칭되는 라우트가 없으면 404
 app.use(() => {

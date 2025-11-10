@@ -399,6 +399,449 @@
   }
 }
 
+.workflowLab {
+  margin: 2.5rem auto 0;
+  padding: 2.5rem;
+  width: min(1120px, 94vw);
+  gap: 2rem;
+}
+
+.workflowIntro {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.workflowIntro h2 {
+  margin: 0;
+  font-size: 1.75rem;
+}
+
+.workflowIntro p {
+  margin: 0.35rem 0 0;
+  color: rgba(15, 23, 42, 0.6);
+  line-height: 1.5;
+}
+
+.workflowBadge {
+  align-self: center;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: rgba(59, 130, 246, 0.1);
+  color: #1d4ed8;
+}
+
+.workflowTabs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.workflowTab {
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  border-radius: 1rem;
+  padding: 1rem;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  transition: border 0.2s ease, background 0.2s ease;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.workflowTab span {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: rgba(15, 23, 42, 0.6);
+}
+
+.workflowTabActive {
+  border-color: rgba(59, 130, 246, 0.5);
+  background: rgba(37, 99, 235, 0.07);
+}
+
+.workflowGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 2rem;
+}
+
+.workflowInputs {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.uploadRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.uploadButton {
+  position: relative;
+  border: 1px dashed rgba(59, 130, 246, 0.6);
+  border-radius: 0.9rem;
+  padding: 0.75rem 1.2rem;
+  font-weight: 600;
+  color: #1d4ed8;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.uploadButton input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.uploadMeta {
+  font-size: 0.85rem;
+  color: rgba(15, 23, 42, 0.6);
+}
+
+.workflowHint {
+  margin: 0;
+  font-size: 0.9rem;
+  color: rgba(15, 23, 42, 0.65);
+}
+
+.workflowTextarea {
+  width: 100%;
+  border-radius: 1rem;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  padding: 1rem;
+  font-size: 0.95rem;
+  min-height: 220px;
+  resize: vertical;
+  background: rgba(248, 250, 252, 0.8);
+}
+
+.workflowControls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.controlField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.controlField input,
+.controlField select {
+  border-radius: 0.8rem;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  padding: 0.6rem 0.8rem;
+  font-size: 0.95rem;
+}
+
+.quizControls,
+.recommendControls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem;
+}
+
+.providerToggleGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.providerToggle {
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  border-radius: 0.9rem;
+  padding: 0.6rem 0.8rem;
+  text-align: left;
+  background: rgba(248, 250, 252, 0.8);
+  flex: 1 1 160px;
+  transition: border 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.providerToggleActive {
+  border-color: rgba(37, 99, 235, 0.5);
+  background: rgba(37, 99, 235, 0.08);
+  transform: translateY(-1px);
+}
+
+.providerLabel {
+  font-weight: 700;
+  display: block;
+}
+
+.providerDescription {
+  font-size: 0.8rem;
+  color: rgba(15, 23, 42, 0.6);
+}
+
+.workflowRunButton {
+  border: none;
+  border-radius: 999px;
+  padding: 0.85rem 1.5rem;
+  font-weight: 700;
+  background: #2563eb;
+  color: #fff;
+  align-self: flex-start;
+  transition: opacity 0.2s ease;
+}
+
+.workflowRunButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.workflowResults {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.resultToolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.toggleGroup {
+  display: inline-flex;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.toggleButton {
+  border: none;
+  padding: 0.4rem 0.9rem;
+  background: transparent;
+  font-weight: 600;
+  color: rgba(15, 23, 42, 0.6);
+}
+
+.toggleButtonActive {
+  background: rgba(37, 99, 235, 0.12);
+  color: #1d4ed8;
+}
+
+.copyButton {
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  padding: 0.45rem 1.1rem;
+  font-weight: 600;
+  background: transparent;
+}
+
+.copyButton:disabled {
+  opacity: 0.5;
+}
+
+.workflowError {
+  margin: 0;
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.workflowResultBody {
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 1.2rem;
+  padding: 1rem;
+  min-height: 280px;
+  background: rgba(248, 250, 252, 0.9);
+  overflow: auto;
+}
+
+.jsonView {
+  margin: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  font-size: 0.9rem;
+  white-space: pre-wrap;
+}
+
+.workflowPlaceholder {
+  margin: 0;
+  color: rgba(15, 23, 42, 0.55);
+}
+
+.summaryList {
+  margin: 0;
+  padding-left: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.qnaList,
+.quizList,
+.recommendList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.qnaCard,
+.quizCard,
+.recommendCard {
+  border-radius: 1rem;
+  background: #fff;
+  padding: 1rem;
+  box-shadow: 0 12px 30px -20px rgba(15, 23, 42, 0.35);
+}
+
+.quizHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.quizTypeBadge {
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(16, 185, 129, 0.15);
+  color: #0f766e;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.quizQuestion {
+  margin: 0 0 0.5rem;
+  font-weight: 600;
+}
+
+.choiceList {
+  margin: 0 0 0.5rem;
+  padding-left: 1.2rem;
+  color: rgba(15, 23, 42, 0.8);
+}
+
+.quizAnswer,
+.quizExplanation {
+  margin: 0;
+  font-size: 0.9rem;
+  color: rgba(15, 23, 42, 0.8);
+}
+
+.recommendHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.recommendTitleGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.recommendHeader a {
+  font-weight: 700;
+  color: #2563eb;
+}
+
+.sourceBadge {
+  border-radius: 999px;
+  padding: 0.2rem 0.7rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #0f172a;
+  background: rgba(148, 163, 184, 0.3);
+}
+
+.source-tavily {
+  background: rgba(59, 130, 246, 0.2);
+  color: #1d4ed8;
+}
+
+.source-dart {
+  background: rgba(16, 185, 129, 0.2);
+  color: #0f766e;
+}
+
+.source-kif_edu {
+  background: rgba(251, 191, 36, 0.25);
+  color: #a16207;
+}
+
+.verifiedBadge,
+.unverifiedBadge {
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.verifiedBadge {
+  background: rgba(34, 197, 94, 0.2);
+  color: #15803d;
+}
+
+.unverifiedBadge {
+  background: rgba(248, 113, 113, 0.2);
+  color: #b91c1c;
+}
+
+.recommendDescription {
+  margin: 0.5rem 0 0;
+  color: rgba(15, 23, 42, 0.75);
+}
+
+.reasonPanel,
+.metaPanel {
+  margin-top: 0.5rem;
+  border-radius: 0.8rem;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: rgba(248, 250, 252, 0.7);
+  padding: 0.6rem 0.9rem;
+}
+
+.reasonPanel summary,
+.metaPanel summary {
+  font-weight: 600;
+  cursor: pointer;
+  color: #0f172a;
+  margin-bottom: 0.35rem;
+}
+
+.reasonPanel p {
+  margin: 0;
+  color: rgba(15, 23, 42, 0.8);
+}
+
+.metaPanel ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.metaPanel li {
+  font-size: 0.85rem;
+  color: rgba(15, 23, 42, 0.75);
+}
+
+@media (max-width: 1024px) {
+  .workflowGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 640px) {
   .page {
     padding: 2rem 0;

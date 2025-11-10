@@ -29,7 +29,11 @@ const EnvSchema = z
     CHAT_PROVIDER: ChatProviderEnum.default('openai'),
     N8N_WEBHOOK_URL: z.string().url().optional(),
     N8N_API_KEY: z.string().optional(),
-    SWAGGER_PORT: z.coerce.number().optional()
+    SWAGGER_PORT: z.coerce.number().optional(),
+    TAVILY_API_KEY: z.string().optional(),
+    DART_API_KEY: z.string().optional(),
+    KIF_EDU_API_KEY: z.string().optional(),
+    KIF_EDU_DATASET_ID: z.string().optional()
   })
   // 제공자에 따른 필수값 조건부 검사
   .superRefine((data, ctx) => {
@@ -58,7 +62,11 @@ const env = EnvSchema.parse({
   CHAT_PROVIDER: process.env.CHAT_PROVIDER,
   N8N_WEBHOOK_URL: process.env.N8N_WEBHOOK_URL,
   N8N_API_KEY: process.env.N8N_API_KEY,
-  SWAGGER_PORT: process.env.SWAGGER_PORT
+  SWAGGER_PORT: process.env.SWAGGER_PORT,
+  TAVILY_API_KEY: process.env.TAVILY_API_KEY,
+  DART_API_KEY: process.env.DART_API_KEY,
+  KIF_EDU_API_KEY: process.env.KIF_EDU_API_KEY,
+  KIF_EDU_DATASET_ID: process.env.KIF_EDU_DATASET_ID
 });
 
 // 애플리케이션 전역에서 사용하는 설정 객체
@@ -70,6 +78,10 @@ export const config = {
   n8nWebhookUrl: env.N8N_WEBHOOK_URL,
   n8nApiKey: env.N8N_API_KEY,
   swaggerPort: env.SWAGGER_PORT,
+  tavilyApiKey: env.TAVILY_API_KEY,
+  dartApiKey: env.DART_API_KEY,
+  kifEduApiKey: env.KIF_EDU_API_KEY,
+  kifEduDatasetId: env.KIF_EDU_DATASET_ID,
   // 쉼표로 구분된 오리진 문자열을 배열로 정규화
   allowedOrigins: env.ALLOWED_ORIGINS
     .split(',')

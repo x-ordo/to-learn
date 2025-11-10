@@ -70,6 +70,209 @@ const components: OpenAPIV3.ComponentsObject = {
           }
         }
       }
+    },
+    SummaryRequest: {
+      type: 'object',
+      required: ['text'],
+      properties: {
+        text: {
+          type: 'string',
+          description: 'Plain text extracted from PDF or manual input.'
+        },
+        maxSentences: {
+          type: 'integer',
+          minimum: 1,
+          maximum: 5,
+          default: 5,
+          description: 'Maximum number of summary sentences (default: 5).'
+        }
+      }
+    },
+    SummaryResponse: {
+      type: 'object',
+      required: ['summary'],
+      properties: {
+        summary: {
+          type: 'array',
+          minItems: 1,
+          maxItems: 5,
+          description: 'Line-by-line summary capped at five rows.',
+          items: { type: 'string' }
+        }
+      }
+    },
+    QnaRequest: {
+      type: 'object',
+      properties: {
+        text: {
+          type: 'string',
+          nullable: true,
+          description: 'Raw text input for Q&A generation.'
+        },
+        summary: {
+          type: 'array',
+          items: { type: 'string' },
+          nullable: true,
+          description: 'Summary lines returned from /api/summary.'
+        },
+        count: {
+          type: 'integer',
+          minimum: 1,
+          maximum: 10,
+          default: 3,
+          description: 'Number of Q&A pairs to generate (default: 3).'
+        }
+      },
+      anyOf: [{ required: ['text'] }, { required: ['summary'] }]
+    },
+    QnaItem: {
+      type: 'object',
+      required: ['q', 'a'],
+      properties: {
+        q: { type: 'string', description: 'Question text' },
+        a: { type: 'string', description: 'Answer text' }
+      }
+    },
+    QnaResponse: {
+      type: 'object',
+      required: ['items'],
+      properties: {
+        items: {
+          type: 'array',
+          minItems: 1,
+          description: 'Generated Q&A pairs',
+          items: { $ref: '#/components/schemas/QnaItem' }
+        }
+      }
+    },
+    QuizRequest: {
+      type: 'object',
+      required: ['text'],
+      properties: {
+        text: {
+          type: 'string',
+          description: 'Source text or lecture notes used to build quiz problems.'
+        },
+        type: {
+          type: 'string',
+          enum: ['objective', 'subjective'],
+          default: 'objective'
+        },
+        count: {
+          type: 'integer',
+          minimum: 3,
+          maximum: 5,
+          default: 3,
+          description: 'Number of quiz problems to generate.'
+        }
+      }
+    },
+    QuizProblem: {
+      type: 'object',
+      required: ['type', 'question', 'answer', 'explanation'],
+      properties: {
+        type: { type: 'string', enum: ['objective', 'subjective'] },
+        question: { type: 'string' },
+        choices: {
+          type: 'array',
+          minItems: 2,
+          maxItems: 5,
+          items: { type: 'string' },
+          description: 'Choice list (objective problems only).'
+        },
+        answer: { type: 'string' },
+        explanation: { type: 'string' }
+      }
+    },
+    QuizResponse: {
+      type: 'object',
+      required: ['problems'],
+      properties: {
+        problems: {
+          type: 'array',
+          minItems: 1,
+          items: { $ref: '#/components/schemas/QuizProblem' }
+        }
+      }
+    },
+    RecommendRequest: {
+      type: 'object',
+      properties: {
+        topic: {
+          type: 'string',
+          description: 'Primary topic or goal for recommendation.'
+        },
+        keywords: {
+          type: 'array',
+          items: { type: 'string' },
+          description: 'List of keywords to feed into the search client.'
+        },
+        limit: {
+          type: 'integer',
+          minimum: 1,
+          maximum: 5,
+          default: 3
+        },
+        providers: {
+          type: 'array',
+          items: {
+            type: 'string',
+            enum: ['tavily', 'dart', 'kif_edu']
+          },
+          description: 'Optional provider filter. Defaults to every available provider.'
+        }
+      },
+      anyOf: [{ required: ['topic'] }, { required: ['keywords'] }]
+    },
+    RecommendItem: {
+      type: 'object',
+      required: ['source', 'title', 'description', 'link', 'reason', 'verified'],
+      properties: {
+        source: {
+          type: 'string',
+          enum: ['tavily', 'dart', 'kif_edu'],
+          description: 'Data provider for the recommendation.'
+        },
+        title: { type: 'string' },
+        description: { type: 'string' },
+        link: { type: 'string', format: 'uri' },
+        reason: {
+          type: 'string',
+          description: 'Model generated rationale explaining why the resource helps.'
+        },
+        verified: { type: 'boolean', description: 'Whether the link responded with HTTP 200.' },
+        meta: {
+          type: 'object',
+          additionalProperties: true,
+          description: 'Provider-specific metadata (e.g., corp name, filing date).'
+        }
+      }
+    },
+    RecommendResponse: {
+      type: 'object',
+      required: ['items'],
+      properties: {
+        items: {
+          type: 'array',
+          minItems: 1,
+          items: { $ref: '#/components/schemas/RecommendItem' }
+        }
+      }
+    },
+    UploadResponse: {
+      type: 'object',
+      required: ['text'],
+      properties: {
+        text: { type: 'string', description: 'UTF-8 text extracted from PDF or TXT upload.' },
+        meta: {
+          type: 'object',
+          properties: {
+            filename: { type: 'string' },
+            mimeType: { type: 'string' },
+            wordCount: { type: 'integer' }
+          }
+        }
+      }
     }
   }
 };
@@ -258,6 +461,185 @@ export const openApiDocument: OpenAPIV3.Document = {
                   }
                 }
               }
+            }
+          }
+        }
+      }
+    },
+    '/api/upload': {
+      post: {
+        summary: 'Upload PDF/TXT file and extract plain text',
+        requestBody: {
+          required: true,
+          content: {
+            'multipart/form-data': {
+              schema: {
+                type: 'object',
+                properties: {
+                  file: {
+                    type: 'string',
+                    format: 'binary',
+                    description: 'PDF or text file up to 10MB'
+                  }
+                },
+                required: ['file']
+              }
+            }
+          }
+        },
+        responses: {
+          '200': {
+            description: 'Extraction succeeded',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/UploadResponse' }
+              }
+            }
+          },
+          '422': {
+            description: 'Validation error',
+            content: {
+              'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } }
+            }
+          }
+        }
+      }
+    },
+    '/api/summary': {
+      post: {
+        summary: 'Generate five-line summary',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/SummaryRequest' }
+            }
+          }
+        },
+        responses: {
+          '200': {
+            description: 'Summary payload',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/SummaryResponse' }
+              }
+            }
+          },
+          '422': {
+            description: 'Validation error',
+            content: {
+              'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } }
+            }
+          },
+          '502': {
+            description: 'Upstream model failure',
+            content: {
+              'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } }
+            }
+          }
+        }
+      }
+    },
+    '/api/qna': {
+      post: {
+        summary: 'Generate structured Q&A pairs',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/QnaRequest' }
+            }
+          }
+        },
+        responses: {
+          '200': {
+            description: 'Q&A items',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/QnaResponse' }
+              }
+            }
+          },
+          '422': {
+            description: 'Validation error',
+            content: {
+              'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } }
+            }
+          },
+          '502': {
+            description: 'Upstream model failure',
+            content: {
+              'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } }
+            }
+          }
+        }
+      }
+    },
+    '/api/quiz': {
+      post: {
+        summary: 'Generate quiz problems with answers and explanations',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/QuizRequest' }
+            }
+          }
+        },
+        responses: {
+          '200': {
+            description: 'Quiz payload',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/QuizResponse' }
+              }
+            }
+          },
+          '422': {
+            description: 'Validation error',
+            content: {
+              'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } }
+            }
+          },
+          '502': {
+            description: 'Upstream model failure',
+            content: {
+              'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } }
+            }
+          }
+        }
+      }
+    },
+    '/api/recommend': {
+      post: {
+        summary: 'Recommend external learning materials',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/RecommendRequest' }
+            }
+          }
+        },
+        responses: {
+          '200': {
+            description: 'Recommendation list',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/RecommendResponse' }
+              }
+            }
+          },
+          '422': {
+            description: 'Validation error',
+            content: {
+              'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } }
+            }
+          },
+          '502': {
+            description: 'Upstream failure (search or validation)',
+            content: {
+              'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } }
             }
           }
         }

@@ -1,0 +1,6 @@
+Regulation Update — Basel III Endgame
+------------------------------------
+금융위원회는 2025년부터 내부등급법(IRB) 적용 은행에 대해 PF 익스포저에 추가 손실흡수 버퍼를 요구할 예정이다.
+- CET1 1%p 상향, 스트레스 테스트 시 PF 가중치 180% 적용.
+- 보고 항목: Sponsor Track Record, Collateral Coverage, Cash Trap 조건.
+- Action Item: 6월 전까지 PF 대출 포트폴리오별 손익 시뮬레이션 제출.

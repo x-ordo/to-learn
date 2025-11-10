@@ -15,6 +15,16 @@ const API_URL =
     ? process.env.NEXT_PUBLIC_CHAT_API_URL
     : '/api/chat';
 
+const deriveBaseUrl = (chatUrl: string) => {
+  const normalized = chatUrl.replace(/\/chat(?:\/.*)?$/i, '');
+  if (!normalized || normalized === '') {
+    return '/api';
+  }
+  return normalized.endsWith('/') ? normalized.slice(0, -1) : normalized;
+};
+
+export const API_BASE_URL = deriveBaseUrl(API_URL);
+
 const fallbackSuggestions: ChatSuggestion[] = [
   {
     id: 'suggest-risk',

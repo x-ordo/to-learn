@@ -59,6 +59,15 @@ package.json  # 공용 스크립트/워크스페이스 설정
 
 ---
 
+## Structured Workflows
+- **Summary (5 lines)** — `/api/summary`는 업로드/붙여넣기 텍스트를 최대 5줄로 정규화합니다.
+- **Q&A JSON** — `/api/qna`는 `{ q, a }[]` 배열을 제공해 UI/Swagger에서 동일한 스키마를 강제합니다.
+- **Quiz Generator** — `/api/quiz`는 객관/주관식 선택과 `answer + explanation`을 함께 돌려줍니다.
+- **Recommendation** — `/api/recommend`는 Tavily·Open DART·e-금융교육센터 3개 소스를 병렬 조회하고 링크 검증 + LLM reason을 제공합니다. 프론트 Recommend 탭에서는 소스별 토글과 출처 배지/추천 근거 패널을 함께 제공합니다.
+- **Document Upload** — `/api/upload` + Next UI의 Summary/Q&A/Quiz/Recommend 탭, JSON/Text 토글, Copy 버튼으로 프롬프트/출력을 분리 프롬프트로 검증할 수 있습니다.
+
+---
+
 ## Configuration
 ### 상담 웹 (`apps/web/.env.local`)
 | Key | 설명 |
@@ -75,6 +84,10 @@ package.json  # 공용 스크립트/워크스페이스 설정
 | `OPENAI_API_KEY` | OpenAI 모드일 때 사용 |
 | `N8N_WEBHOOK_URL` | n8n 모드일 때 연결할 웹훅 |
 | `N8N_API_KEY` | n8n 호출 시 사용할 토큰(선택) |
+| `TAVILY_API_KEY` | Tavily 실시간 검색 API 키 |
+| `DART_API_KEY` | Open DART 공시 API 키 |
+| `KIF_EDU_API_KEY` | e-금융교육센터(OpenAPI) 서비스 키 |
+| `KIF_EDU_DATASET_ID` | (선택) 오픈데이터셋 경로. 기본값 제공 |
 
 > 운영 배포 시 `ALLOWED_ORIGINS`에 `https://to-learn-web.vercel.app`를 꼭 포함해 상담 웹에서 안전하게 호출하도록 합니다.
 
@@ -84,6 +97,21 @@ package.json  # 공용 스크립트/워크스페이스 설정
 - 챗봇 메시지, 추천 프롬프트, 카테고리/난이도 정의 등 상담에 필요한 모든 규격을 단일 소스로 관리합니다.
 - `/docs`, `/docs.json`에서 동일한 스키마를 참조해 n8n·외부 파트너와도 일관된 통합을 지원합니다.
 - 규격 변경 시 `npm run build:contracts`로 재배포하면 웹/엔진이 동시에 최신 스키마를 공유합니다.
+
+---
+
+## Samples & Demo
+- `samples/` 디렉터리에 5개 이상의 TXT/PDF 자료가 포함되어 있어 업로드·요약·문제 생성 테스트를 재현할 수 있습니다.
+- `scripts/demo.mjs`는 `upload → summary → qna → quiz → recommend`를 순차 호출하고 결과를 `results/*.json`에 저장합니다. 자세한 사용법은 [`DEMO_GUIDE.md`](DEMO_GUIDE.md)를 참고하세요.
+- 실행 예시:
+  ```bash
+  DEMO_API_BASE=http://localhost:4000/api node scripts/demo.mjs
+  ```
+
+## Reference Docs
+- [`PROMPT_GUIDE.md`](PROMPT_GUIDE.md) — Summary/Q&A/Quiz/Recommend 프롬프트 규칙.
+- [`UPGRADE_ROADMAP.md`](UPGRADE_ROADMAP.md) — RFP 기준 대비 단계별 개선 계획.
+- [`DEMO_GUIDE.md`](DEMO_GUIDE.md) — 데모 스크립트 및 샘플 데이터 검증 절차.
 
 ---
 

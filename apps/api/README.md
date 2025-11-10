@@ -40,6 +40,10 @@ npm run dev:api
 | `N8N_WEBHOOK_URL` | `CHAT_PROVIDER=n8n`일 때 필수. 동일한 ChatRequest JSON을 받는 HTTP 엔드포인트 |
 | `N8N_API_KEY` | 선택. 제공 시 `Authorization: Bearer` 헤더로 전달 |
 | `SWAGGER_PORT` | 선택. API 포트와 분리된 Swagger UI 전용 포트(예: 8000) |
+| `TAVILY_API_KEY` | Tavily 검색 API 키 |
+| `DART_API_KEY` | Open DART 공시 API 키 |
+| `KIF_EDU_API_KEY` | e-금융교육센터(OpenAPI) 서비스 키 |
+| `KIF_EDU_DATASET_ID` | (선택) e-금융교육센터 데이터셋 경로 |
 
 > 운영 환경 예시:  
 > `ALLOWED_ORIGINS=http://localhost:3000,https://to-learn-web.vercel.app`  
@@ -57,6 +61,11 @@ npm run dev:api
 | `POST` | `/api/chat/stream` | SSE 토큰 스트리밍 또는 n8n 단일 완료 이벤트 |
 | `GET` | `/api/conversations/:id` | 저장된 대화 + 메시지 조회 |
 | `GET` | `/api/suggestions` | 추천 프롬프트 조회 |
+| `POST` | `/api/upload` | PDF/TXT 업로드 → 텍스트 추출 |
+| `POST` | `/api/summary` | 문서를 5줄 요약(JSON) |
+| `POST` | `/api/qna` | Q&A `{ q, a }[]` 생성 |
+| `POST` | `/api/quiz` | 객관/주관식 문제 + 정답/해설 |
+| `POST` | `/api/recommend` | Tavily/DART/금융교육 3원 검색 + 링크 검증 + LLM Reason |
 | `GET` | `/docs`, `/docs.json` | Swagger UI & OpenAPI JSON |
 
 ## 배포 (Render)
@@ -72,13 +81,20 @@ src/
   db.ts              # SQLite 초기화 + CRUD
   env.ts             # Zod 기반 환경설정
   middleware/        # requestId, error handler
-  routes/            # chat, stream, conversations, suggestions, health
+  routes/            # chat, stream, conversations, suggestions, health, upload, summary, qna, quiz, recommend
   services/
     openai.ts        # GPT-4o 호출 + 모델 매핑
+    workflows.ts     # Summary/Q&A/Quiz 구조화 LLM 호출
+    pdfParser.ts     # PDF 텍스트 추출
+    searchClient.ts  # Serper.dev 검색 래퍼
+    linkValidator.ts # 링크 정규화 + HEAD 검증
     n8n.ts           # n8n HTTP/Webhook 호출 래퍼 (동기/스트림 모두 처리)
     suggestions.ts   # 추천 Prompt 로테이션
   types.ts           # DB 레코드 타입 + @to-learn/contracts 재노출
   utils/             # Prompt builder, asyncHandler 등
+
+## Demo Script
+루트의 `scripts/demo.mjs`를 실행하면 `/samples` 데이터를 기반으로 upload→summary→qna→quiz→recommend 흐름을 자동 호출하고 결과를 `results/*.json`에 저장합니다. API를 배포한 뒤 스모크 테스트 용도로 활용하세요.
 ```
 
 ## 개발 팁

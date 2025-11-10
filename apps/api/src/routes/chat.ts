@@ -18,6 +18,12 @@ import { invokeN8nChat } from '../services/n8n';
  * `/api/chat`       : 단발(non-stream) 응답
  * `/api/chat/stream`: Server-Sent Events 기반 스트리밍 응답
  *
+ * 보안 메모
+ * - 입력은 반드시 `ChatRequestSchema`로 검증되며 빈 문자열, 비정상 conversationId 등이 필터링됩니다.
+ * - 대화 레코드는 서버가 생성한 UUID로만 조회되므로 사용자가 임의의 ID를 요청해도 존재하지 않으면 저장소에서 반환되지 않습니다.
+ * - OpenAI/n8n 등 외부 공급자 호출은 try/catch로 감싸고, 원본 에러 메시지는 `ApiError`를 통해 요약해 노출 정보량을 최소화합니다.
+ * - SSE 스트림은 `AbortController`로 관리하여 클라이언트 종료 시 외부 모델 호출을 즉시 중단해 자원 고갈을 방지합니다.
+ *
  * 요청/응답 스키마는 `@to-learn/contracts`와 동일하며,
  * OpenAI 모드와 n8n 모드가 동일한 HTTP 계약을 유지하도록 추상화합니다.
  */
