@@ -265,6 +265,9 @@ export default function ChatPage() {
   const [quizSubjectiveAnswer, setQuizSubjectiveAnswer] = useState('');
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const toolbarRef = useRef<HTMLDivElement | null>(null);
+
+  const isOverallLoading = isLoading || isUploading || isWorkflowRunning;
+
   const appendAssistantMessage = (content: string) => {
     if (!content) return;
     setMessages((prev) => [
@@ -852,6 +855,12 @@ export default function ChatPage() {
           </header>
 
           <div className={styles.messages}>
+            {isOverallLoading && (
+              <div className={styles.loadingOverlay}>
+                <div className={styles.loadingSpinner}></div>
+                <p className={styles.loadingText}>작업을 처리 중입니다. 잠시만 기다려주세요...</p>
+              </div>
+            )}
             {messages.length === 0 && !isLoading ? (
               <div className={styles.emptyState}>
                 <h2>첫 질문으로 학습을 시작해보세요!</h2>
