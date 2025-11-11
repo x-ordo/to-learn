@@ -59,6 +59,7 @@ router.post(
 
     // 대화 레코드 생성/업서트(모델/난이도/카테고리 등 메타데이터 반영)
     const conversation = ensureConversation({
+      userId: req.user?.id,
       conversationId,
       model: metadata?.model ? resolveModel(metadata.model) : undefined,
       difficulty: metadata?.difficulty,
@@ -106,7 +107,8 @@ router.post(
     try {
       const completion = await createChatCompletion({
         model: conversation.model ?? metadata?.model,
-        messages: buildMessagesForOpenAI({ history, metadata })
+        messages: buildMessagesForOpenAI({ history, metadata }),
+        max_tokens: 250
       });
 
       const content = parseAssistantContent(completion.choices[0]?.message?.content as any);
@@ -158,6 +160,7 @@ router.post(
     req.on('close', () => controller.abort());
 
     const conversation = ensureConversation({
+      userId: req.user?.id,
       conversationId,
       model: metadata?.model ? resolveModel(metadata.model) : undefined,
       difficulty: metadata?.difficulty,
@@ -223,7 +226,8 @@ router.post(
       const stream = await createChatCompletionStream({
         model: conversation.model ?? metadata?.model,
         messages: buildMessagesForOpenAI({ history, metadata }),
-        signal: controller.signal
+        signal: controller.signal,
+        max_tokens: 250
       });
 
       let fullContent = '';

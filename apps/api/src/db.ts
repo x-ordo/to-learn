@@ -16,7 +16,9 @@ import type {
   ConversationRecord,
   Difficulty,
   MessageRecord,
-  SuggestionRecord
+  SuggestionRecord,
+  UserRecord,
+  SessionRecord
 } from './types';
 
 // ----------------------------------------------
@@ -28,6 +30,9 @@ interface MemoryStore {
   conversations: Map<string, ConversationRecord>;
   messages: MessageRecord[];
   suggestions: Map<string, SuggestionRecord>;
+  usersById: Map<string, UserRecord>;
+  usersByName: Map<string, UserRecord>;
+  sessionsById: Map<string, SessionRecord>;
 }
 
 type SqliteDatabase = {
@@ -40,7 +45,10 @@ type SqliteDatabase = {
 const memoryStore: MemoryStore = {
   conversations: new Map(),
   messages: [],
-  suggestions: new Map()
+  suggestions: new Map(),
+  usersById: new Map(),
+  usersByName: new Map(),
+  sessionsById: new Map()
 };
 
 let storageMode: StorageMode = 'sqlite';
@@ -76,6 +84,7 @@ const migrations = `
 CREATE TABLE IF NOT EXISTS conversations (
   id TEXT PRIMARY KEY,
   created_at TEXT NOT NULL,
+  user_id TEXT,
   model TEXT,
   difficulty TEXT,
   category TEXT,
@@ -102,10 +111,37 @@ CREATE TABLE IF NOT EXISTS suggestions (
 
 CREATE INDEX IF NOT EXISTS idx_messages_conversation_created_at
   ON messages(conversation_id, created_at);
+
+-- Users (simple login)
+CREATE TABLE IF NOT EXISTS users (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL UNIQUE,
+  password_hash TEXT NOT NULL,
+  created_at TEXT NOT NULL
+);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_users_name ON users(name);
+
+-- Sessions (cookie-based)
+CREATE TABLE IF NOT EXISTS sessions (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  expires_at TEXT NOT NULL,
+  FOREIGN KEY(user_id) REFERENCES users(id)
+);
+CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id);
+CREATE INDEX IF NOT EXISTS idx_sessions_expires ON sessions(expires_at);
 `;
 
 if (storageMode === 'sqlite' && db) {
   ensureDb().exec(migrations);
+  // Best-effort schema upgrades for existing DBs
+  try {
+    ensureDb().exec('ALTER TABLE conversations ADD COLUMN user_id TEXT');
+  } catch (_) {}
+  try {
+    ensureDb().exec('CREATE INDEX IF NOT EXISTS idx_conversations_user ON conversations(user_id)');
+  } catch (_) {}
 }
 
 // 기본 추천 프롬프트 시드 데이터(처음 실행 시 한번만 저장)
@@ -163,6 +199,7 @@ seedSuggestionsIfNeeded();
 const buildConversationRecord = (params: {
   id: string;
   createdAt: string;
+  userId?: string | null;
   model?: string | null;
   difficulty?: Difficulty | null;
   category?: Category | null;
@@ -171,6 +208,7 @@ const buildConversationRecord = (params: {
 }): ConversationRecord => ({
   id: params.id,
   createdAt: params.createdAt,
+  userId: params.userId ?? null,
   model: params.model ?? null,
   difficulty: params.difficulty ?? null,
   category: params.category ?? null,
@@ -185,6 +223,7 @@ const buildConversationRecord = (params: {
 // 대화가 없으면 생성하고, 있으면 전달된 메타데이터로 갱신합니다.
 export const ensureConversation = (params: {
   conversationId?: string;
+  userId?: string | null;
   model?: string;
   difficulty?: Difficulty;
   category?: Category;
@@ -199,6 +238,7 @@ export const ensureConversation = (params: {
     if (existing) {
       const merged: ConversationRecord = {
         ...existing,
+        userId: existing.userId ?? params.userId ?? null,
         model: params.model ?? existing.model ?? null,
         difficulty: params.difficulty ?? existing.difficulty ?? null,
         category: params.category ?? existing.category ?? null,
@@ -212,6 +252,7 @@ export const ensureConversation = (params: {
     const record = buildConversationRecord({
       id,
       createdAt: now,
+      userId: params.userId ?? null,
       model: params.model ?? null,
       difficulty: params.difficulty ?? null,
       category: params.category ?? null,
@@ -225,6 +266,7 @@ export const ensureConversation = (params: {
   const existing = getConversation(id);
   if (existing) {
     const merged = {
+      userId: existing.userId ?? params.userId ?? null,
       model: params.model ?? existing.model,
       difficulty: params.difficulty ?? (existing.difficulty as Difficulty | null),
       category: params.category ?? (existing.category as Category | null),
@@ -234,7 +276,7 @@ export const ensureConversation = (params: {
 
     ensureDb()
       .prepare(
-        `UPDATE conversations SET model=@model, difficulty=@difficulty, category=@category, source=@source, topic=@topic
+        `UPDATE conversations SET user_id=@userId, model=@model, difficulty=@difficulty, category=@category, source=@source, topic=@topic
          WHERE id=@id`
       )
       .run({ id, ...merged });
@@ -248,12 +290,13 @@ export const ensureConversation = (params: {
 
   ensureDb()
     .prepare(
-      `INSERT INTO conversations (id, created_at, model, difficulty, category, source, topic)
-       VALUES (@id, @createdAt, @model, @difficulty, @category, @source, @topic)`
+      `INSERT INTO conversations (id, created_at, user_id, model, difficulty, category, source, topic)
+       VALUES (@id, @createdAt, @userId, @model, @difficulty, @category, @source, @topic)`
     )
     .run({
       id,
       createdAt: now,
+      userId: params.userId ?? null,
       model: params.model ?? null,
       difficulty: params.difficulty ?? null,
       category: params.category ?? null,
@@ -264,6 +307,7 @@ export const ensureConversation = (params: {
   return buildConversationRecord({
     id,
     createdAt: now,
+    userId: params.userId ?? null,
     model: params.model ?? null,
     difficulty: params.difficulty ?? null,
     category: params.category ?? null,
@@ -280,7 +324,7 @@ export const getConversation = (id: string): ConversationRecord | undefined => {
 
   const row = ensureDb()
     .prepare(
-      `SELECT id, created_at as createdAt, model, difficulty, category, source, topic
+      `SELECT id, created_at as createdAt, user_id as userId, model, difficulty, category, source, topic
        FROM conversations WHERE id = ?`
     )
     .get(id);
@@ -388,4 +432,120 @@ export const getConversationWithMessages = (id: string): {
   }
   const messages = listMessages(id, 500);
   return { conversation, messages };
+};
+
+export const listConversationsByUser = (userId: string, limit = 20): ConversationRecord[] => {
+  if (storageMode === 'memory') {
+    const records = Array.from(memoryStore.conversations.values()).filter((c) => c.userId === userId);
+    return records.sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, limit);
+  }
+  const rows = ensureDb()
+    .prepare(
+      `SELECT id, created_at as createdAt, user_id as userId, model, difficulty, category, source, topic
+       FROM conversations WHERE user_id = ?
+       ORDER BY created_at DESC
+       LIMIT ?`
+    )
+    .all(userId, limit);
+  return rows as ConversationRecord[];
+};
+
+// ------------------
+// Auth: Users / Sessions
+// ------------------
+
+export const getUserByName = (name: string): UserRecord | undefined => {
+  if (storageMode === 'memory') {
+    return memoryStore.usersByName.get(name);
+  }
+  const row = ensureDb()
+    .prepare(
+      `SELECT id, name, password_hash as passwordHash, created_at as createdAt
+       FROM users WHERE name = ?`
+    )
+    .get(name);
+  return row as UserRecord | undefined;
+};
+
+export const getUserById = (id: string): UserRecord | undefined => {
+  if (storageMode === 'memory') {
+    return memoryStore.usersById.get(id);
+  }
+  const row = ensureDb()
+    .prepare(
+      `SELECT id, name, password_hash as passwordHash, created_at as createdAt
+       FROM users WHERE id = ?`
+    )
+    .get(id);
+  return row as UserRecord | undefined;
+};
+
+export const createUser = (name: string, passwordHash: string): UserRecord => {
+  const user: UserRecord = {
+    id: uuid(),
+    name,
+    passwordHash,
+    createdAt: new Date().toISOString()
+  };
+
+  if (storageMode === 'memory') {
+    memoryStore.usersById.set(user.id, user);
+    memoryStore.usersByName.set(user.name, user);
+    return user;
+  }
+
+  ensureDb()
+    .prepare(
+      `INSERT INTO users (id, name, password_hash, created_at)
+       VALUES (@id, @name, @passwordHash, @createdAt)`
+    )
+    .run(user);
+  return user;
+};
+
+export const createSession = (userId: string, ttlMs: number): SessionRecord => {
+  const now = Date.now();
+  const record: SessionRecord = {
+    id: uuid(),
+    userId,
+    createdAt: new Date(now).toISOString(),
+    expiresAt: new Date(now + ttlMs).toISOString()
+  };
+
+  if (storageMode === 'memory') {
+    memoryStore.sessionsById.set(record.id, record);
+    return record;
+  }
+
+  ensureDb()
+    .prepare(
+      `INSERT INTO sessions (id, user_id, created_at, expires_at)
+       VALUES (@id, @userId, @createdAt, @expiresAt)`
+    )
+    .run(record);
+  return record;
+};
+
+export const getSession = (id: string): SessionRecord | undefined => {
+  const nowIso = new Date().toISOString();
+  if (storageMode === 'memory') {
+    const rec = memoryStore.sessionsById.get(id);
+    if (rec && rec.expiresAt > nowIso) return rec;
+    return undefined;
+  }
+  const row = ensureDb()
+    .prepare(
+      `SELECT id, user_id as userId, created_at as createdAt, expires_at as expiresAt
+       FROM sessions WHERE id = ? AND expires_at > ?`
+    )
+    .get(id, nowIso);
+  return row as SessionRecord | undefined;
+};
+
+export const deleteSession = (id: string): void => {
+  if (storageMode === 'memory') {
+    memoryStore.sessionsById.delete(id);
+    return;
+  }
+  ensureDb().prepare(`DELETE FROM sessions WHERE id = ?`).run(id);
 };

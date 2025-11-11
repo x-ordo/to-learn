@@ -24,6 +24,8 @@ import { quizRouter } from './routes/quiz';
 import { recommendRouter } from './routes/recommend';
 import { uploadRouter } from './routes/upload';
 import { openApiDocument } from '@to-learn/contracts';
+import { sessionMiddleware } from './middleware/session';
+import { authRouter } from './routes/auth';
 
 // Express 앱 초기화. Render 등 프록시 환경을 고려하여 trust proxy 설정을 활성화합니다.
 const app = express();
@@ -47,6 +49,8 @@ app.use(
   })
 );
 app.use(express.json({ limit: '1mb' }));
+// 세션 쿠키로 사용자 정보 연결
+app.use(sessionMiddleware);
 
 // 헬스 체크 외 모든 요청에 대해 공용 액세스 로그를 남깁니다.
 app.use(
@@ -75,6 +79,7 @@ const registerDocsRoutes = (application: express.Express) => {
 registerDocsRoutes(app);
 
 app.use('/_health', healthRouter);
+app.use('/api/auth', authRouter);
 app.use('/api/chat', chatRouter);
 app.use('/api/conversations', conversationsRouter);
 app.use('/api/suggestions', suggestionsRouter);

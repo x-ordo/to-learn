@@ -15,6 +15,7 @@ export type { Category, ChatMetadata, ChatRequestBody, Difficulty } from '@to-le
 export interface ConversationRecord {
   id: string;
   createdAt: string;
+  userId?: string | null;
   model?: string | null;
   difficulty?: Difficulty | null;
   category?: Category | null;
@@ -42,4 +43,21 @@ export interface SuggestionRecord {
   prompt: string;
   category?: Category | null;
   weight: number;
+}
+
+/**
+ * 간단 사용자/세션 레코드(무가입 로그인용)
+ */
+export interface UserRecord {
+  id: string;
+  name: string; // unique
+  passwordHash: string; // pbkdf2 파생값
+  createdAt: string;
+}
+
+export interface SessionRecord {
+  id: string; // session id
+  userId: string;
+  createdAt: string;
+  expiresAt: string;
 }

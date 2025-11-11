@@ -44,6 +44,8 @@ npm run dev:api
 | `DART_API_KEY` | Open DART 공시 API 키 |
 | `KIF_EDU_API_KEY` | e-금융교육센터(OpenAPI) 서비스 키 |
 | `KIF_EDU_DATASET_ID` | (선택) e-금융교육센터 데이터셋 경로 |
+| `SESSION_SECRET` | 세션 쿠키 서명/암호화용 비밀 문자열(최소 8자) |
+| `SESSION_TTL_DAYS` | 세션 유효기간(일). 기본 7 |
 
 > 운영 환경 예시:  
 > `ALLOWED_ORIGINS=http://localhost:3000,https://to-learn-web.vercel.app`  
@@ -67,6 +69,9 @@ npm run dev:api
 | `POST` | `/api/quiz` | 객관/주관식 문제 + 정답/해설 |
 | `POST` | `/api/recommend` | Tavily/DART/금융교육 3원 검색 + 링크 검증 + LLM Reason |
 | `GET` | `/docs`, `/docs.json` | Swagger UI & OpenAPI JSON |
+| `POST` | `/api/auth/login` | 이름+비밀번호로 로그인(최초 로그인 시 사용자 생성) |
+| `POST` | `/api/auth/logout` | 로그아웃(쿠키 삭제) |
+| `GET` | `/api/auth/me` | 현재 사용자 조회(미인증 시 401) |
 
 ## 배포 (Render)
 1. GitHub 저장소를 Render Web Service로 연결.
@@ -102,3 +107,4 @@ src/
 - n8n과의 계약은 `packages/contracts/src/chat.ts`에서 관리하므로 변경 시 프론트/백 모두에 바로 반영됩니다.
 - `render.yaml`를 참고하면 동일 설정으로 인프라를 재현할 수 있습니다.
 - 로컬에서 `better-sqlite3` 네이티브 모듈을 빌드하지 못하는 경우 서버가 자동으로 메모리 저장소로 폴백합니다. 데이터는 재시작 시 초기화되므로, 영구 저장이 필요하면 Node 20 환경에서 네이티브 모듈을 빌드하세요.
+ - 프론트에서 쿠키 세션을 사용하려면 `fetch(..., { credentials: 'include' })`로 호출하고, CORS `ALLOWED_ORIGINS`를 올바르게 설정하세요.

@@ -33,7 +33,9 @@ const EnvSchema = z
     TAVILY_API_KEY: z.string().optional(),
     DART_API_KEY: z.string().optional(),
     KIF_EDU_API_KEY: z.string().optional(),
-    KIF_EDU_DATASET_ID: z.string().optional()
+    KIF_EDU_DATASET_ID: z.string().optional(),
+    SESSION_SECRET: z.string().min(8, 'SESSION_SECRET must be set').default('change_me'),
+    SESSION_TTL_DAYS: z.coerce.number().default(7)
   })
   // 제공자에 따른 필수값 조건부 검사
   .superRefine((data, ctx) => {
@@ -66,7 +68,9 @@ const env = EnvSchema.parse({
   TAVILY_API_KEY: process.env.TAVILY_API_KEY,
   DART_API_KEY: process.env.DART_API_KEY,
   KIF_EDU_API_KEY: process.env.KIF_EDU_API_KEY,
-  KIF_EDU_DATASET_ID: process.env.KIF_EDU_DATASET_ID
+  KIF_EDU_DATASET_ID: process.env.KIF_EDU_DATASET_ID,
+  SESSION_SECRET: process.env.SESSION_SECRET,
+  SESSION_TTL_DAYS: process.env.SESSION_TTL_DAYS
 });
 
 // 애플리케이션 전역에서 사용하는 설정 객체
@@ -82,6 +86,8 @@ export const config = {
   dartApiKey: env.DART_API_KEY,
   kifEduApiKey: env.KIF_EDU_API_KEY,
   kifEduDatasetId: env.KIF_EDU_DATASET_ID,
+  sessionSecret: env.SESSION_SECRET,
+  sessionTtlMs: env.SESSION_TTL_DAYS * 24 * 60 * 60 * 1000,
   // 쉼표로 구분된 오리진 문자열을 배열로 정규화
   allowedOrigins: env.ALLOWED_ORIGINS
     .split(',')
