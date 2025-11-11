@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: to-learn-server
+    env: node
+    plan: starter
+    buildCommand: npm install && npm run build:api
+    startCommand: npm run start:api
+    envVars:
+      - key: NODE_VERSION
+        value: 20.19.5
+      - key: SQLITE_PATH
+        value: /var/data/tolearn.db
+      - fromGroup: to-learn-server-shared
+    disk:
+      name: tolearn-sqlite
+      mountPath: /var/data
+      sizeGB: 1
+
+envVarGroups:
+  - name: to-learn-server-shared
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: CHAT_PROVIDER
+        value: openai
+      - key: N8N_WEBHOOK_URL
+        value: 
+      - key: N8N_API_KEY
+        value: 
+      - key: ALLOWED_ORIGINS
+        value: https://to-learn-web.vercel.app,https://preview.to-learn-web.vercel.app,http://localhost:3000
