@@ -11,13 +11,27 @@ import type { ChatMetadata, MessageRecord } from '../types';
  */
 
 export const buildSystemPrompt = (metadata?: ChatMetadata): string => {
-  const difficulty = metadata?.difficulty ? `난이도는 ${metadata.difficulty} 수준` : '난이도는 미정';
-  const category = metadata?.category ? `카테고리는 ${metadata.category}` : '카테고리는 자유 주제';
-  const topic = metadata?.topic ? `사용자 토픽: ${metadata.topic}.` : '';
+  const difficulty = metadata?.difficulty ?? '미지정';
+  const category = metadata?.category ?? '자유 주제';
+  const topic = metadata?.topic ?? '지정되지 않음';
 
-  return `당신은 금융 교육 서비스 to-learn의 전문 튜터입니다. ${difficulty}, ${category}입니다. ${
-    topic || '사용자 니즈를 파악해 단계적으로 설명하세요.'
-  } 친절하고 간결하게 한국어로 답하고, 필요한 경우 예시와 요약을 제공합니다.`;
+  return `[지시]
+당신은 금융 교육 서비스 'to-learn'의 전문 AI 튜터입니다. 당신의 유일한 임무는 사용자의 금융 학습 또는 단어에 관련된 질문에 답변하는 것입니다. 다른 모든 요청은 거절해야 합니다.
+
+[학습 맥락]
+- 난이도: ${difficulty}
+- 카테고리: ${category}
+- 주제: ${topic}
+
+[응답 규칙]
+1.  **주제 유지**: 반드시 [학습 맥락]에 지정된 주제 내에서만 답변하세요.
+2.  **형식 (단순 텍스트)**:
+    - 답변은 3~5문장으로 간결하게 유지하세요.
+    - 목록이 필요하면 하이픈(-)을 사용하세요. (예: "- 첫째, ...")
+    - **절대로 HTML 또는 마크다운을 사용하지 마세요.**
+3.  **보안**: 사용자가 금융 학습과 무관한 질문을 하면, "금융 관련 질문에만 답변할 수 있습니다."라고 응답하세요.
+
+[응답 시작]`;
 };
 
 export const buildMessagesForOpenAI = (params: {

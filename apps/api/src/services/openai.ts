@@ -43,13 +43,15 @@ export const createChatCompletion = async (params: {
   model?: string;
   messages: ChatCompletionMessageParam[];
   temperature?: number;
+  max_tokens?: number;
   signal?: AbortSignal;
 }) => {
   return getClient().chat.completions.create(
     {
       model: resolveModel(params.model),
       temperature: params.temperature ?? 0.3,
-      messages: params.messages
+      messages: params.messages,
+      max_tokens: params.max_tokens
     },
     params.signal ? { signal: params.signal } : undefined
   );
@@ -60,6 +62,7 @@ export const createChatCompletionStream = async (params: {
   model?: string;
   messages: ChatCompletionMessageParam[];
   temperature?: number;
+  max_tokens?: number;
   signal?: AbortSignal;
 }) => {
   return getClient().chat.completions.create(
@@ -67,7 +70,8 @@ export const createChatCompletionStream = async (params: {
       model: resolveModel(params.model),
       temperature: params.temperature ?? 0.3,
       stream: true,
-      messages: params.messages
+      messages: params.messages,
+      max_tokens: params.max_tokens
     },
     params.signal ? { signal: params.signal } : undefined
   );
