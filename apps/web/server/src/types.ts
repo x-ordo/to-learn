@@ -14,7 +14,7 @@ export const ChatRequestSchema = z.object({
       topic: z.string().optional(),
       model: z.string().optional(),
       difficulty: z.enum(['하', '중', '상']).optional(),
-      category: z.enum(['금융경제용어', '재무제표']).optional()
+      category: z.enum(['금융경제용어']).optional()
     })
     .optional()
 });

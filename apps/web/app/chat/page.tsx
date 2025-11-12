@@ -64,8 +64,7 @@ const difficultyOptions: Array<{ label: string; value: Difficulty; description: 
 ];
 
 const categoryOptions: Array<{ label: string; value: Category; description: string }> = [
-  { label: '금융 경제 용어', value: '금융경제용어', description: '금융 상품/시장 용어 정리' },
-  { label: '재무제표', value: '재무제표', description: '손익·현금흐름·재무상태표 분석' }
+  { label: '금융 경제 용어', value: '금융경제용어', description: '금융 상품/시장 용어 정리' }
 ];
 
 type MenuType = 'model' | 'difficulty' | 'category';

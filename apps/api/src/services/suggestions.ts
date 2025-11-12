@@ -13,7 +13,7 @@ const FALLBACK_SUGGESTIONS: SuggestionRecord[] = [
     id: 'fallback-risk',
     label: '리스크 점검',
     prompt: '최근 포트폴리오에서 리스크가 큰 항목을 짚어줘.',
-    category: '재무제표',
+    category: '금융경제용어',
     weight: 1
   },
   {
@@ -27,7 +27,7 @@ const FALLBACK_SUGGESTIONS: SuggestionRecord[] = [
     id: 'fallback-dcf',
     label: '현금흐름 분석',
     prompt: 'DCF 모델 결과를 점검할 때 확인해야 할 체크리스트를 알려줘.',
-    category: '재무제표',
+    category: '금융경제용어',
     weight: 1
   }
 ];

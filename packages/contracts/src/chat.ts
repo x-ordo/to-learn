@@ -13,7 +13,7 @@ export type ChatRole = 'user' | 'assistant' | 'system';
 export const DifficultyEnum = z.enum(['하', '중', '상']);
 export type Difficulty = z.infer<typeof DifficultyEnum>;
 
-export const CategoryEnum = z.enum(['금융경제용어', '재무제표']);
+export const CategoryEnum = z.enum(['금융경제용어']);
 export type Category = z.infer<typeof CategoryEnum>;
 
 // 메타데이터는 학습 세션의 맥락(출처, 주제, 모델, 난이도, 카테고리 등)을 전달합니다.

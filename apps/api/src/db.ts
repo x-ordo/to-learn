@@ -150,14 +150,14 @@ const seedSuggestions: SuggestionRecord[] = [
     id: 'suggest-risk',
     label: '리스크 관리 연습',
     prompt: 'PF 대출 리스크 요인을 짚어보고 완화 전략을 추천해줘.',
-    category: '재무제표',
+    category: '금융경제용어',
     weight: 10
   },
   {
     id: 'suggest-dcf',
     label: 'DCF 복습',
     prompt: 'DCF 모델의 핵심 가정을 정리해보고 민감도 분석 포인트를 알려줘.',
-    category: '재무제표',
+    category: '금융경제용어',
     weight: 8
   },
   {
