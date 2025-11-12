@@ -70,7 +70,8 @@
   flex-direction: column;
   gap: 1.25rem;
   width: min(900px, 94vw);
-  margin: 0 auto;
+  /* 상단 고정 헤더와 겹침 방지 기본 여백 */
+  margin: 2rem auto 0;
 }
 
 .panel {
