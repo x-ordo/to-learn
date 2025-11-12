@@ -13,7 +13,7 @@ const components: OpenAPIV3.ComponentsObject = {
         topic: { type: 'string', example: 'DCF' },
         model: { type: 'string', example: 'openai-gpt-4o-mini' },
         difficulty: { type: 'string', enum: ['하', '중', '상'] },
-        category: { type: 'string', enum: ['금융경제용어', '재무제표'] }
+        category: { type: 'string', enum: ['금융경제용어'] }
       }
     },
     ChatRequest: {
@@ -442,7 +442,7 @@ export const openApiDocument: OpenAPIV3.Document = {
           {
             in: 'query',
             name: 'category',
-            schema: { type: 'string', enum: ['금융경제용어', '재무제표'] },
+            schema: { type: 'string', enum: ['금융경제용어'] },
             description: 'Optional category filter'
           }
         ],

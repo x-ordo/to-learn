@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChatRequestSchema = exports.ChatMetadataSchema = exports.CategoryEnum = exports.DifficultyEnum = void 0;
 const zod_1 = require("zod");
 exports.DifficultyEnum = zod_1.z.enum(['하', '중', '상']);
-exports.CategoryEnum = zod_1.z.enum(['금융경제용어', '재무제표']);
+exports.CategoryEnum = zod_1.z.enum(['금융경제용어']);
 exports.ChatMetadataSchema = zod_1.z
     .object({
     source: zod_1.z.string().optional(),
